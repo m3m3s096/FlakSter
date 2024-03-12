@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Upload</title>
+
+    <style>
+        body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-color: #f8f8f8;
+}
+
+h1 {
+    color: #333;
+}
+
+input[type="file"] {
+    margin: 10px 0;
+}
+
+button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#progress {
+    margin-top: 20px;
+    font-weight: bold;
+}
+    </style>
+
+
+</head>
+<body>
+    <h1>Multiple File Upload</h1>
+    <input type="file" id="fileInput" multiple>
+    <button onclick="uploadFiles()">Upload Files</button>
+    <div id="progress"></div>
+
+    <script>
+        function uploadFiles() {
+            const files = document.getElementById('fileInput').files;
+            const xhr = new XMLHttpRequest();
+            const formData = new FormData();
+
+            for (let i = 0; i < files.length; i++) {
+                formData.append('files[]', files[i]);
+            }
+
+            xhr.open('POST', '/upload', true);
+            xhr.upload.onprogress = function(event) {
+                if (event.lengthComputable) {
+                    const percentComplete = (event.loaded / event.total) * 100;
+                    document.getElementById('progress').innerText = 'Upload Progress: ' + percentComplete.toFixed(2) + '%';
+                }
+            };
+
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    document.getElementById('progress').innerText = 'Files uploaded successfully';
+                } else {
+                    document.getElementById('progress').innerText = 'An error occurred';
+                }
+            };
+
+            xhr.send(formData);
+        }
+    </script>
+</body>
+</html>
